@@ -1,0 +1,23 @@
+services:
+  pdns-recursor:
+    build: .
+    container_name: pdns-recursor
+    restart: unless-stopped
+    cap_add:
+      - NET_BIND_SERVICE
+    privileged: true
+    security_opt:
+      - apparmor:unconfined
+    command:
+      - "--local-address=0.0.0.0,::"
+      - "--local-port=53"
+      - "--allow-from=0.0.0.0/0,::/0"
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    # Run as root so the process can create and manage the runtime socket dir
+    # under /var/run (see PDNS 4.3+ socket-dir requirement).
+    user: "0:0"
+    # Ensure a writable runtime directory for PDNS control socket
+    tmpfs:
+      - /var/run/pdns-recursor

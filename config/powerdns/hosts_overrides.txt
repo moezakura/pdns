@@ -1,0 +1,8 @@
+# Static host overrides in the form:
+#   domain=IPv4
+# Supports wildcard prefix lines like:
+#   *.example.com=1.2.3.4
+
+# Requested mapping
+mox.si=192.168.10.153
+*.mox.si=192.168.10.153
