@@ -1,4 +1,4 @@
-name: Deploy to Self-Hosted Runner
+name: Deploy to Self-Hosted Runners
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, Linux, X64, dns]
+  deploy-kokon-amane:
+    runs-on: [self-hosted, Linux, X64, dns, kokon-amane]
 
     steps:
       - name: Checkout code
@@ -25,17 +25,17 @@ jobs:
       - name: Stop existing containers
         run: |
           docker compose down || true
-          echo "Existing containers stopped"
+          echo "Existing containers stopped on kokon-amane"
 
       - name: Remove unused Docker resources
         run: |
           docker system prune -f --volumes || true
-          echo "Cleaned up unused Docker resources"
+          echo "Cleaned up unused Docker resources on kokon-amane"
 
       - name: Build and start containers
         run: |
           docker compose up -d --build
-          echo "Containers started successfully"
+          echo "Containers started successfully on kokon-amane"
 
       - name: Wait for services to be ready
         run: |
@@ -45,7 +45,51 @@ jobs:
       - name: Check container health
         run: |
           docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Service}}"
-          echo "Deployment completed at $(date)"
+          echo "Deployment completed on kokon-amane at $(date)"
+
+      - name: Show container logs (last 20 lines)
+        if: always()
+        run: |
+          docker compose logs --tail=20
+
+  deploy-kurumi-fuyu:
+    runs-on: [self-hosted, Linux, X64, dns, kurumi-fuyu]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          fetch-depth: 0
+
+      - name: Pull latest changes
+        run: |
+          git pull origin ${{ github.ref_name }}
+
+      - name: Stop existing containers
+        run: |
+          docker compose down || true
+          echo "Existing containers stopped on kurumi-fuyu"
+
+      - name: Remove unused Docker resources
+        run: |
+          docker system prune -f --volumes || true
+          echo "Cleaned up unused Docker resources on kurumi-fuyu"
+
+      - name: Build and start containers
+        run: |
+          docker compose up -d --build
+          echo "Containers started successfully on kurumi-fuyu"
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+          docker compose ps
+
+      - name: Check container health
+        run: |
+          docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Service}}"
+          echo "Deployment completed on kurumi-fuyu at $(date)"
 
       - name: Show container logs (last 20 lines)
         if: always()
