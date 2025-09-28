@@ -1,0 +1,53 @@
+name: Deploy to Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, dns]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          fetch-depth: 0
+
+      - name: Pull latest changes
+        run: |
+          git pull origin ${{ github.ref_name }}
+
+      - name: Stop existing containers
+        run: |
+          docker compose down || true
+          echo "Existing containers stopped"
+
+      - name: Remove unused Docker resources
+        run: |
+          docker system prune -f --volumes || true
+          echo "Cleaned up unused Docker resources"
+
+      - name: Build and start containers
+        run: |
+          docker compose up -d --build
+          echo "Containers started successfully"
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+          docker compose ps
+
+      - name: Check container health
+        run: |
+          docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Service}}"
+          echo "Deployment completed at $(date)"
+
+      - name: Show container logs (last 20 lines)
+        if: always()
+        run: |
+          docker compose logs --tail=20
