@@ -1,5 +1,6 @@
 -- AdBlock functionality + host overrides
 local adblock = {}
+local allowlist = {}
 local overrides_exact = {}
 local overrides_wildcard = {}
 
@@ -85,8 +86,30 @@ local function wildcard_lookup_ip(qname)
   return nil
 end
 
+-- Load allowed domains (bypass adblock)
+local function load_allowed_domains(file_path)
+  local file, err = io.open(file_path, "r")
+  if not file then
+    pdnslog("No allowlist file: " .. file_path .. ": " .. tostring(err), pdns.loglevels.Warning)
+    return
+  end
+
+  local count = 0
+  for line in file:lines() do
+    local s = trim(line)
+    if s ~= "" and not s:match("^#") then
+      s = s:lower():gsub("%.$", "")
+      allowlist[s] = true
+      count = count + 1
+    end
+  end
+  file:close()
+  pdnslog("Loaded allowlist entries: " .. tostring(count) .. " from " .. file_path, pdns.loglevels.Info)
+end
+
 -- Load lists at startup
 load_blocked_domains("/etc/powerdns/blocked_domains.txt")
+load_allowed_domains("/etc/powerdns/allowed_domains.txt")
 load_host_overrides("/etc/powerdns/hosts_overrides.txt")
 
 -- Called for every DNS query
@@ -105,10 +128,13 @@ function preresolve(dq)
     return true
   end
 
-  -- Block if qname or any ancestor is in the block set
-  if ancestor_match_in_set(qname, adblock) then
-    dq.rcode = pdns.NXDOMAIN
-    return true
+  -- Allow if qname or any ancestor is in the allowlist (bypass adblock)
+  if not ancestor_match_in_set(qname, allowlist) then
+    -- Block if qname or any ancestor is in the block set
+    if ancestor_match_in_set(qname, adblock) then
+      dq.rcode = pdns.NXDOMAIN
+      return true
+    end
   end
 
   return false

@@ -1,0 +1,5 @@
+# Allowlist - these domains bypass the adblock filter
+# One domain per line. Ancestor matching applies:
+#   "newrelic.com" allows all subdomains like "api.newrelic.com"
+#   "api.newrelic.com" allows only that specific domain and its subdomains
+api.newrelic.com
