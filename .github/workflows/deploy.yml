@@ -22,10 +22,6 @@ jobs:
         run: |
           git pull origin ${{ github.ref_name }}
 
-      - name: Pull base images before stopping services
-        run: |
-          docker compose pull --ignore-buildable || true
-
       - name: Stop existing containers
         run: |
           docker compose down || true
@@ -69,10 +65,6 @@ jobs:
       - name: Pull latest changes
         run: |
           git pull origin ${{ github.ref_name }}
-
-      - name: Pull base images before stopping services
-        run: |
-          docker compose pull --ignore-buildable || true
 
       - name: Stop existing containers
         run: |
