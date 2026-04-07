@@ -12,16 +12,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64, dns, kokon-amane]
 
     steps:
-      - name: Ensure Docker uses external DNS
-        run: |
-          if [ ! -f /etc/docker/daemon.json ] || ! grep -q '1.1.1.1' /etc/docker/daemon.json; then
-            echo '{"dns": ["1.1.1.1", "1.0.0.1"]}' | sudo tee /etc/docker/daemon.json
-            sudo systemctl restart docker
-            echo "Docker DNS configured to use 1.1.1.1 on kokon-amane"
-          else
-            echo "Docker DNS already configured on kokon-amane"
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -70,16 +60,6 @@ jobs:
     runs-on: [self-hosted, Linux, X64, dns, kurumi-fuyu]
 
     steps:
-      - name: Ensure Docker uses external DNS
-        run: |
-          if [ ! -f /etc/docker/daemon.json ] || ! grep -q '1.1.1.1' /etc/docker/daemon.json; then
-            echo '{"dns": ["1.1.1.1", "1.0.0.1"]}' | sudo tee /etc/docker/daemon.json
-            sudo systemctl restart docker
-            echo "Docker DNS configured to use 1.1.1.1 on kurumi-fuyu"
-          else
-            echo "Docker DNS already configured on kurumi-fuyu"
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
