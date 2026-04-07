@@ -2,4 +2,6 @@
 # One domain per line. Ancestor matching applies:
 #   "newrelic.com" allows all subdomains like "api.newrelic.com"
 #   "api.newrelic.com" allows only that specific domain and its subdomains
+newrelic.com
+docs.newrelic.com
 api.newrelic.com
