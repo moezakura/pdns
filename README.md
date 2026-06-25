@@ -2,7 +2,7 @@
 
 この構成は PowerDNS Recursor を Docker 上で実行し、
 - `config/powerdns/blocked_domains.txt` のドメインを NXDOMAIN でブロック
-- `config/powerdns/hosts_overrides.txt` の静的エントリで A レコードを上書き（`mox.si` と `*.mox.si` を 192.168.10.153 に解決）
+- `config/powerdns/hosts_overrides.txt` の静的エントリで A レコードを上書き（`mox.si` / `*.mox.si` / `mox.run` / `*.mox.run` を 192.168.10.153 に解決）
 を行います。
 
 ## 使い方
@@ -30,6 +30,12 @@ dig @127.0.0.1 mox.si A +short
 
 dig @127.0.0.1 sub.mox.si A +short
 # => 192.168.10.153
+
+dig @127.0.0.1 mox.run A +short
+# => 192.168.10.153
+
+dig @127.0.0.1 sub.mox.run A +short
+# => 192.168.10.153
 ```
 
 - ブロック確認（例）
@@ -51,6 +57,8 @@ dig @127.0.0.1 doubleclick.net A +short
   - 例: 本リポジトリには既定で
     - `mox.si=192.168.10.153`
     - `*.mox.si=192.168.10.153`
+    - `mox.run=192.168.10.153`
+    - `*.mox.run=192.168.10.153`
     を含めています
 
 変更後は以下で再読み込み（再起動）してください。
@@ -76,5 +84,6 @@ docker compose restart pdns-recursor
 
 ```
 dig @127.0.0.1 mox.si A +short
+dig @127.0.0.1 mox.run A +short
 dig @127.0.0.1 google.com A +short
 ```

@@ -6,3 +6,5 @@
 # Requested mapping
 mox.si=192.168.10.153
 *.mox.si=192.168.10.153
+mox.run=192.168.10.153
+*.mox.run=192.168.10.153
