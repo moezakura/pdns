@@ -38,3 +38,8 @@ monitoring.us-gov-east-1.amazonaws.com
 monitoring.us-gov-west-1.amazonaws.com
 monitoring.us-west-1.amazonaws.com
 monitoring.us-west-2.amazonaws.com
+
+# 楽天市場アプリ
+r10s.jp
+shopapi.ranking.rakuten.co.jp
+grp15.ias.rakuten.co.jp
