@@ -43,3 +43,4 @@ monitoring.us-west-2.amazonaws.com
 r10s.jp
 shopapi.ranking.rakuten.co.jp
 grp15.ias.rakuten.co.jp
+a.ichiba.jp.rakuten-static.com
